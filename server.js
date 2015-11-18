@@ -39,9 +39,10 @@ module.exports = app;
 
 
 var makeSlackRequest = function(message) {
+    var localVideoProxy = getBaseUrl() + "/video";
     request.post({
         uri: slackWebhookUrl,
-        body:'{"channel": "#foosball", "username": "webhookbot", "text": "<'+videoStreamUrl+'|Click here for live cam> This is a test from our foosball cam team", "icon_emoji": ":ghost:"}'
+        body:'{"channel": "#foosball", "username": "webhookbot", "text": "<'+localVideoProxy+'|Click here for live cam> This is a test from our foosball cam team", "icon_emoji": ":ghost:"}'
     }).on("error", function(err){
         console.log('got a slack error ' + err);
     }).on("response", function(res){
@@ -51,7 +52,8 @@ var makeSlackRequest = function(message) {
 };
 
 var getBaseUrl = function() {
+    //we probably need a better solution than this.
     var networkInterfaces = os.getNetworkInterfaces();
     var interface = networkInterfaces["en0"][1];
-    return interface.address;
+    return "http://" + interface.address + ':' + server.address().port;
 };
